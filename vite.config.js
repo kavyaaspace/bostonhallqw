@@ -50,6 +50,20 @@ function subscribersApiPlugin() {
                 await fs.appendFile(csvPath, `"${cleanEmail}","${now}","website_subscriber"\n`, 'utf-8');
               }
 
+              // Forward to Google Sheets if configured
+              const googleSheetUrl = process.env.GOOGLE_SHEETS_URL || process.env.VITE_GOOGLE_SHEETS_URL;
+              if (googleSheetUrl && googleSheetUrl.startsWith('https://script.google.com/')) {
+                fetch(googleSheetUrl, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    email: cleanEmail,
+                    timestamp: now,
+                    source: 'boston_halloween_website'
+                  })
+                }).catch(() => {});
+              }
+
               res.statusCode = 200;
               res.setHeader('Content-Type', 'application/json');
               return res.end(JSON.stringify({

@@ -152,6 +152,20 @@ app.post('/api/subscribe', async (req, res) => {
     const row = `"${cleanEmail}","${now}","website_subscriber_section"\n`;
     await fs.appendFile(SUBSCRIBERS_CSV_FILE, row, 'utf-8');
 
+    // Forward to Google Sheets if configured in .env
+    const googleSheetUrl = process.env.GOOGLE_SHEETS_URL;
+    if (googleSheetUrl && googleSheetUrl.startsWith('https://script.google.com/')) {
+      fetch(googleSheetUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: cleanEmail,
+          timestamp: now,
+          source: 'boston_halloween_website'
+        })
+      }).catch((err) => console.warn('[Google Sheets Sync] Forward notice:', err.message));
+    }
+
     return res.json({
       success: true,
       message: "You're on the VIP Halloween guest list! Watch your inbox for secret party drops and discounts."

@@ -46,6 +46,17 @@ export default function SubscribePopup() {
         body: JSON.stringify({ email: cleanEmail })
       });
 
+      // Sync to Google Sheets if configured in environment
+      const sheetUrl = import.meta.env.VITE_GOOGLE_SHEETS_URL;
+      if (sheetUrl && sheetUrl.startsWith('https://script.google.com/')) {
+        fetch(sheetUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: cleanEmail, timestamp: new Date().toISOString(), source: 'subscribe_popup' })
+        }).catch(() => {});
+      }
+
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.success) {
         setStatus('success');
@@ -58,6 +69,17 @@ export default function SubscribePopup() {
         setTimeout(() => handleClose(), 2800);
       }
     } catch {
+      // Sync to Google Sheets if configured even if /api is offline
+      const sheetUrl = import.meta.env.VITE_GOOGLE_SHEETS_URL;
+      if (sheetUrl && sheetUrl.startsWith('https://script.google.com/')) {
+        fetch(sheetUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: cleanEmail, timestamp: new Date().toISOString(), source: 'subscribe_popup' })
+        }).catch(() => {});
+      }
+
       saveToLocalStorage(cleanEmail);
       setStatus('success');
       setEmail('');
