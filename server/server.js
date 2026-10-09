@@ -125,9 +125,20 @@ app.post('/api/subscribe', async (req, res) => {
 
     const now = new Date().toISOString();
     if (!existingContent || existingContent.trim().length === 0) {
-      const header = 'Email,SubscribedAt,Source\n';
-      const row = `"${cleanEmail}","${now}","website_subscriber_section"\n`;
+      const header = 'Email\n';
+      const row = `"${cleanEmail}"\n`;
       await fs.writeFile(SUBSCRIBERS_CSV_FILE, header + row, 'utf-8');
+
+      // Forward to Google Sheets if configured in .env
+      const googleSheetUrl = process.env.GOOGLE_SHEETS_URL;
+      if (googleSheetUrl && googleSheetUrl.startsWith('https://script.google.com/')) {
+        fetch(googleSheetUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: cleanEmail })
+        }).catch((err) => console.warn('[Google Sheets Sync] Forward notice:', err.message));
+      }
+
       return res.json({
         success: true,
         message: "You're on the VIP Halloween guest list! Watch your inbox for secret party drops and discounts."
@@ -138,7 +149,7 @@ app.post('/api/subscribe', async (req, res) => {
     const lines = existingContent.split('\n');
     const alreadySubscribed = lines.some(line => {
       const trimmed = line.trim().toLowerCase();
-      return trimmed.includes(`"${cleanEmail}"`) || trimmed.startsWith(`${cleanEmail},`);
+      return trimmed.includes(`"${cleanEmail}"`) || trimmed === cleanEmail;
     });
 
     if (alreadySubscribed) {
@@ -149,7 +160,7 @@ app.post('/api/subscribe', async (req, res) => {
     }
 
     // Append to CSV
-    const row = `"${cleanEmail}","${now}","website_subscriber_section"\n`;
+    const row = `"${cleanEmail}"\n`;
     await fs.appendFile(SUBSCRIBERS_CSV_FILE, row, 'utf-8');
 
     // Forward to Google Sheets if configured in .env
@@ -158,11 +169,7 @@ app.post('/api/subscribe', async (req, res) => {
       fetch(googleSheetUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: cleanEmail,
-          timestamp: now,
-          source: 'boston_halloween_website'
-        })
+        body: JSON.stringify({ email: cleanEmail })
       }).catch((err) => console.warn('[Google Sheets Sync] Forward notice:', err.message));
     }
 

@@ -35,7 +35,7 @@ export default function SubscribeSection() {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: cleanEmail, timestamp: new Date().toISOString(), source: 'subscribe_section' })
+          body: JSON.stringify({ email: cleanEmail })
         }).catch(() => {});
       }
 
@@ -57,7 +57,7 @@ export default function SubscribeSection() {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: cleanEmail, timestamp: new Date().toISOString(), source: 'subscribe_section' })
+          body: JSON.stringify({ email: cleanEmail })
         }).catch(() => {});
       }
 

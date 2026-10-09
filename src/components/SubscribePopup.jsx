@@ -53,7 +53,7 @@ export default function SubscribePopup() {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: cleanEmail, timestamp: new Date().toISOString(), source: 'subscribe_popup' })
+          body: JSON.stringify({ email: cleanEmail })
         }).catch(() => {});
       }
 
@@ -76,7 +76,7 @@ export default function SubscribePopup() {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: cleanEmail, timestamp: new Date().toISOString(), source: 'subscribe_popup' })
+          body: JSON.stringify({ email: cleanEmail })
         }).catch(() => {});
       }
 

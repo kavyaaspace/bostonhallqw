@@ -41,13 +41,13 @@ function subscribersApiPlugin() {
               }
 
               if (!existing || existing.trim().length === 0) {
-                await fs.writeFile(csvPath, 'Email,SubscribedAt,Source\n', 'utf-8');
-                existing = 'Email,SubscribedAt,Source\n';
+                await fs.writeFile(csvPath, 'Email\n', 'utf-8');
+                existing = 'Email\n';
               }
 
-              const isDuplicate = existing.toLowerCase().includes(`"${cleanEmail}"`) || existing.toLowerCase().includes(`${cleanEmail},`);
+              const isDuplicate = existing.toLowerCase().includes(`"${cleanEmail}"`) || existing.toLowerCase().includes(cleanEmail);
               if (!isDuplicate) {
-                await fs.appendFile(csvPath, `"${cleanEmail}","${now}","website_subscriber"\n`, 'utf-8');
+                await fs.appendFile(csvPath, `"${cleanEmail}"\n`, 'utf-8');
               }
 
               // Forward to Google Sheets if configured
@@ -56,11 +56,7 @@ function subscribersApiPlugin() {
                 fetch(googleSheetUrl, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    email: cleanEmail,
-                    timestamp: now,
-                    source: 'boston_halloween_website'
-                  })
+                  body: JSON.stringify({ email: cleanEmail })
                 }).catch(() => {});
               }
 
