@@ -5,11 +5,10 @@ export default function SubscribePopup() {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState('idle'); // 'idle' | 'loading' | 'success' | 'error'
-  const [message, setMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   // Trigger popup after exactly 5 seconds
   useEffect(() => {
-    // Check if user has already dismissed or subscribed in this session
     const isDismissed = sessionStorage.getItem('dismissed_halloween_subscribe_popup');
     if (isDismissed) return;
 
@@ -33,12 +32,12 @@ export default function SubscribePopup() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(cleanEmail)) {
       setStatus('error');
-      setMessage('Please enter a valid email address.');
+      setErrorMessage('Please enter a valid email address.');
       return;
     }
 
     setStatus('loading');
-    setMessage('');
+    setErrorMessage('');
 
     try {
       const res = await fetch('/api/subscribe', {
@@ -47,25 +46,22 @@ export default function SubscribePopup() {
         body: JSON.stringify({ email: cleanEmail })
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (res.ok && data.success) {
         setStatus('success');
-        setMessage(data.message || "You're subscribed to Boston Halloween updates!");
         setEmail('');
-        setTimeout(() => handleClose(), 2000);
+        setTimeout(() => handleClose(), 2800);
       } else {
         saveToLocalStorage(cleanEmail);
         setStatus('success');
-        setMessage("You're subscribed to Boston Halloween updates!");
         setEmail('');
-        setTimeout(() => handleClose(), 2000);
+        setTimeout(() => handleClose(), 2800);
       }
     } catch {
       saveToLocalStorage(cleanEmail);
       setStatus('success');
-      setMessage("You're subscribed to Boston Halloween updates!");
       setEmail('');
-      setTimeout(() => handleClose(), 2000);
+      setTimeout(() => handleClose(), 2800);
     }
   };
 
@@ -105,8 +101,20 @@ export default function SubscribePopup() {
           <X size={20} />
         </button>
 
-        {/* Ambient Top Glow */}
-        <div className="subscribe-popup-glow" aria-hidden="true" />
+        {/* Full Popup Overlay upon successful submission */}
+        {status === 'success' && (
+          <div className="subscribe-overlay-confirmation" role="status" aria-live="polite">
+            <div className="subscribe-overlay-content">
+              <CheckCircle2 size={42} className="subscribe-overlay-icon" />
+              <h3 className="subscribe-overlay-title" style={{ fontSize: '1.6rem' }}>
+                Thanks for subscribing!
+              </h3>
+              <p className="subscribe-overlay-subtitle" style={{ fontSize: '0.92rem' }}>
+                You're on the list. Watch your inbox for secret party drops and discounts.
+              </p>
+            </div>
+          </div>
+        )}
 
         <div className="subscribe-popup-content">
           <div className="subscribe-badge">
@@ -149,18 +157,10 @@ export default function SubscribePopup() {
             </button>
           </form>
 
-          {/* Feedback Messages */}
-          {status === 'success' && (
-            <div className="subscribe-alert subscribe-success" role="alert">
-              <CheckCircle2 size={18} className="alert-icon" />
-              <span>{message}</span>
-            </div>
-          )}
-
           {status === 'error' && (
             <div className="subscribe-alert subscribe-error" role="alert">
               <AlertCircle size={18} className="alert-icon" />
-              <span>{message}</span>
+              <span>{errorMessage}</span>
             </div>
           )}
         </div>

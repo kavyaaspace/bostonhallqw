@@ -4,7 +4,7 @@ import { Mail, CheckCircle2, AlertCircle } from 'lucide-react';
 export default function SubscribeSection() {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState('idle'); // 'idle' | 'loading' | 'success' | 'error'
-  const [message, setMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,12 +14,12 @@ export default function SubscribeSection() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(cleanEmail)) {
       setStatus('error');
-      setMessage('Please enter a valid email address.');
+      setErrorMessage('Please enter a valid email address.');
       return;
     }
 
     setStatus('loading');
-    setMessage('');
+    setErrorMessage('');
 
     try {
       const res = await fetch('/api/subscribe', {
@@ -28,26 +28,24 @@ export default function SubscribeSection() {
         body: JSON.stringify({ email: cleanEmail })
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (res.ok && data.success) {
         setStatus('success');
-        setMessage(data.message || "You're subscribed to Boston Halloween updates!");
         setEmail('');
       } else {
-        saveToLocalStorageFallback(cleanEmail);
+        // Fallback save to localStorage
+        saveToLocalStorage(cleanEmail);
         setStatus('success');
-        setMessage("You're subscribed to Boston Halloween updates!");
         setEmail('');
       }
     } catch {
-      saveToLocalStorageFallback(cleanEmail);
+      saveToLocalStorage(cleanEmail);
       setStatus('success');
-      setMessage("You're subscribed to Boston Halloween updates!");
       setEmail('');
     }
   };
 
-  const saveToLocalStorageFallback = (emailToSave) => {
+  const saveToLocalStorage = (emailToSave) => {
     try {
       const stored = JSON.parse(localStorage.getItem('halloween_subscribers') || '[]');
       if (!stored.includes(emailToSave)) {
@@ -62,8 +60,25 @@ export default function SubscribeSection() {
   return (
     <section className="subscribe-section" aria-label="Subscribe to Boston Halloween Events Newsletter">
       <div className="subscribe-card">
-        {/* Ambient Top Flame Glow */}
-        <div className="subscribe-glow" aria-hidden="true" />
+        {/* Full Section Overlay upon successful submission */}
+        {status === 'success' && (
+          <div className="subscribe-overlay-confirmation" role="status" aria-live="polite">
+            <div className="subscribe-overlay-content">
+              <CheckCircle2 size={46} className="subscribe-overlay-icon" />
+              <h2 className="subscribe-overlay-title">Thanks for subscribing!</h2>
+              <p className="subscribe-overlay-subtitle">
+                You're on the list. Watch your inbox for secret party drops and exclusive ticket discounts.
+              </p>
+              <button
+                type="button"
+                onClick={() => setStatus('idle')}
+                className="btn-subscribe-again"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="subscribe-content">
           <div className="subscribe-badge">
@@ -105,18 +120,10 @@ export default function SubscribeSection() {
             </button>
           </form>
 
-          {/* Feedback Messages */}
-          {status === 'success' && (
-            <div className="subscribe-alert subscribe-success" role="alert">
-              <CheckCircle2 size={18} className="alert-icon" />
-              <span>{message}</span>
-            </div>
-          )}
-
           {status === 'error' && (
             <div className="subscribe-alert subscribe-error" role="alert">
               <AlertCircle size={18} className="alert-icon" />
-              <span>{message}</span>
+              <span>{errorMessage}</span>
             </div>
           )}
         </div>
