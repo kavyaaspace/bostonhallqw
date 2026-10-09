@@ -6,6 +6,7 @@ import FloatingDatesBar from './components/FloatingDatesBar';
 import EventCard from './components/EventCard';
 import EmptyState from './components/EmptyState';
 import GallerySection from './components/GallerySection';
+import SubscribeSection from './components/SubscribeSection';
 import Footer from './components/Footer';
 import OrganizerDashboard from './components/OrganizerDashboard';
 import { formatDateDetails } from './utils/dateUtils';
@@ -300,6 +301,9 @@ export default function App() {
       <div className="gallery-wide-container">
         <GallerySection />
       </div>
+
+      {/* VIP Halloween Email Subscription Section */}
+      <SubscribeSection />
 
       <Footer />
     </div>

@@ -15,6 +15,7 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const DATA_FILE = path.resolve(__dirname, '../data/events.json');
+const SUBSCRIBERS_CSV_FILE = path.resolve(__dirname, '../data/subscribers.csv');
 const DIST_DIR = path.resolve(__dirname, '../dist');
 
 const app = express();
@@ -92,6 +93,94 @@ app.get('/api/events', async (req, res) => {
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
+});
+
+/**
+ * Public Endpoint: Subscribe email to VIP newsletter
+ * Appends email, timestamp, and source to CSV file
+ */
+app.post('/api/subscribe', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email || typeof email !== 'string') {
+      return res.status(400).json({ success: false, error: 'A valid email address is required.' });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      return res.status(400).json({ success: false, error: 'Please enter a valid email address.' });
+    }
+
+    // Ensure data directory exists
+    const dataDir = path.dirname(SUBSCRIBERS_CSV_FILE);
+    await fs.mkdir(dataDir, { recursive: true });
+
+    let existingContent = '';
+    try {
+      existingContent = await fs.readFile(SUBSCRIBERS_CSV_FILE, 'utf-8');
+    } catch {
+      existingContent = '';
+    }
+
+    const now = new Date().toISOString();
+    if (!existingContent || existingContent.trim().length === 0) {
+      const header = 'Email,SubscribedAt,Source\n';
+      const row = `"${cleanEmail}","${now}","website_subscriber_section"\n`;
+      await fs.writeFile(SUBSCRIBERS_CSV_FILE, header + row, 'utf-8');
+      return res.json({
+        success: true,
+        message: "You're on the VIP Halloween guest list! Watch your inbox for secret party drops and discounts."
+      });
+    }
+
+    // Check if already subscribed
+    const lines = existingContent.split('\n');
+    const alreadySubscribed = lines.some(line => {
+      const trimmed = line.trim().toLowerCase();
+      return trimmed.includes(`"${cleanEmail}"`) || trimmed.startsWith(`${cleanEmail},`);
+    });
+
+    if (alreadySubscribed) {
+      return res.json({
+        success: true,
+        message: "You're already on the VIP Halloween guest list! We'll keep you updated."
+      });
+    }
+
+    // Append to CSV
+    const row = `"${cleanEmail}","${now}","website_subscriber_section"\n`;
+    await fs.appendFile(SUBSCRIBERS_CSV_FILE, row, 'utf-8');
+
+    return res.json({
+      success: true,
+      message: "You're on the VIP Halloween guest list! Watch your inbox for secret party drops and discounts."
+    });
+  } catch (err) {
+    console.error('Error recording subscription:', err);
+    return res.status(500).json({ success: false, error: 'Unable to save subscription at this moment. Please try again.' });
+  }
+});
+
+/**
+ * Public Endpoint: oEmbed JSON for Rich Embed Banners
+ */
+app.get('/api/oembed', (req, res) => {
+  res.json({
+    version: '1.0',
+    type: 'rich',
+    title: 'Boston Halloween Events',
+    author_name: 'Boston Halloween Events',
+    author_url: 'https://bostonhalloweenevents.com',
+    provider_name: 'Boston Halloween Events',
+    provider_url: 'https://bostonhalloweenevents.com',
+    thumbnail_url: 'https://res.cloudinary.com/dbj0pmqr/image/upload/v1791547465/img2896-1.avif',
+    thumbnail_width: 1200,
+    thumbnail_height: 630,
+    html: '<iframe src="https://bostonhalloweenevents.com/embed" width="100%" height="450" frameborder="0" style="border:1px solid rgba(255,107,0,0.3); border-radius:12px; max-width:600px;" allowfullscreen title="Boston Halloween Events"></iframe>',
+    width: 600,
+    height: 450
+  });
 });
 
 /**

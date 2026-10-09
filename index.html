@@ -2,27 +2,36 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2248%22 fill=%22black%22 stroke=%22white%22 stroke-width=%224%22/><text y=%22.75em%22 x=%2250%%22 text-anchor=%22middle%22 font-size=%2260%22 fill=%22white%22>💀</text></svg>" />
+
+    <!-- Halloween Pumpkin Favicon & App Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎃</text></svg>" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <meta name="theme-color" content="#080b12" />
+    <meta name="color-scheme" content="dark" />
+
+    <!-- Viewport & Mobile Scaling -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-    <meta name="theme-color" content="#000000" />
 
-    <!-- Google Search Console Site Verification -->
-    <!-- Replace "YOUR_GOOGLE_VERIFICATION_CODE" with your code from Google Search Console -->
+    <!-- Webmaster Verification (Google Search Console & Bing) -->
     <meta name="google-site-verification" content="YOUR_GOOGLE_VERIFICATION_CODE" />
+    <meta name="msvalidate.01" content="YOUR_BING_VERIFICATION_CODE" />
 
-    <!-- Canonical URL -->
+    <!-- Canonical URL & oEmbed Discovery for Embed Banners -->
     <link rel="canonical" href="https://bostonhalloweenevents.com/" />
+    <link rel="alternate" type="application/json+oembed" href="https://bostonhalloweenevents.com/api/oembed" title="Boston Halloween Events" />
 
     <!-- Search Engine Robots Directives -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
 
-    <!-- SEO & Social Sharing Metadata -->
+    <!-- SEO Primary Metadata -->
     <title>Boston Halloween Events</title>
     <meta name="application-name" content="Boston Halloween Events" />
     <meta name="apple-mobile-web-app-title" content="Boston Halloween Events" />
-    <meta name="description" content="Discover top Boston Halloween events: costume parties, haunted harbor cruises, historic ghost walks, and pub crawls. Get official tickets directly on Eventbrite." />
-    <meta name="keywords" content="Boston Halloween events, Halloween tickets Boston, Eventbrite Halloween Boston, Boston pub crawl, costume party, haunted harbor cruise" />
+    <meta name="author" content="Boston Halloween Events" />
+    <meta name="description" content="Discover top Boston Halloween events: costume parties, haunted pub crawls, nightclub takeovers, and bar passes. Get official tickets directly on Eventbrite." />
+    <meta name="keywords" content="Boston Halloween events, Halloween tickets Boston, Eventbrite Halloween Boston, Boston pub crawl, costume party, Fenway Halloween, Boston nightlife" />
 
     <!-- Local SEO Geo-Tags for Boston -->
     <meta name="geo.region" content="US-MA" />
@@ -30,20 +39,26 @@
     <meta name="geo.position" content="42.3601;-71.0589" />
     <meta name="ICBM" content="42.3601, -71.0589" />
 
-    <!-- Open Graph / Facebook -->
+    <!-- Open Graph / Facebook Embed Banner -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://bostonhalloweenevents.com/" />
     <meta property="og:site_name" content="Boston Halloween Events" />
-    <meta property="og:title" content="Boston Halloween Events | Curated Halloween Guides & Tickets" />
-    <meta property="og:description" content="Find the best Halloween events across Boston. Grab your official tickets on Eventbrite before they sell out." />
+    <meta property="og:title" content="Boston Halloween Events | Official Tickets on Eventbrite" />
+    <meta property="og:description" content="Explore Boston's top Halloween parties, pub crawls, and nightlife with direct Eventbrite ticket checkout." />
     <meta property="og:image" content="https://res.cloudinary.com/dbj0pmqr/image/upload/v1791547465/img2896-1.avif" />
+    <meta property="og:image:secure_url" content="https://res.cloudinary.com/dbj0pmqr/image/upload/v1791547465/img2896-1.avif" />
+    <meta property="og:image:type" content="image/avif" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Boston Halloween Events — Curated Halloween Nightlife and Tickets on Eventbrite" />
     <meta property="og:locale" content="en_US" />
 
-    <!-- Twitter Card -->
+    <!-- Twitter Card Embed Banner -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:title" content="Boston Halloween Events | Tickets on Eventbrite" />
-    <meta property="twitter:description" content="Explore Boston's premier Halloween parties, ghost tours, and pub crawls with direct Eventbrite ticket checkout." />
+    <meta property="twitter:title" content="Boston Halloween Events | Official Tickets on Eventbrite" />
+    <meta property="twitter:description" content="Explore Boston's top Halloween parties, pub crawls, and nightlife with direct Eventbrite ticket checkout." />
     <meta property="twitter:image" content="https://res.cloudinary.com/dbj0pmqr/image/upload/v1791547465/img2896-1.avif" />
+    <meta property="twitter:image:alt" content="Boston Halloween Events Official Banner" />
 
     <!-- Google Font: Geist Only (Weights 300, 400, 500) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -174,6 +189,54 @@
                   "availability": "https://schema.org/InStock",
                   "validFrom": "2026-10-01T00:00:00-04:00"
                 }
+              }
+            }
+          ]
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://bostonhalloweenevents.com/#breadcrumbs",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://bostonhalloweenevents.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Boston Halloween Events 2026",
+              "item": "https://bostonhalloweenevents.com/#events-section"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://bostonhalloweenevents.com/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What are the best Halloween events and parties in Boston?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Top Boston Halloween events include THE PERFECT ALIBI at Alibi Lounge, Dillon's Dead at Night with a $500 costume contest, Nightmare on Lansdowne Street at Game On!, Lucky's 13 Halloween at Lucky's Lounge, and Crawl-O-Ween Boston with DJ Pauly D."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How do I get official tickets for Boston Halloween events?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Every event listed on Boston Halloween Events links directly to its verified official Eventbrite checkout listing with 256-bit SSL encryption and guaranteed admission."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Are costumes required for Boston Halloween parties?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Costumes are strongly encouraged across all Boston Halloween nightlife events, with many venues featuring cash prizes up to $500 for best individual and group costumes."
               }
             }
           ]
