@@ -19,7 +19,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
-  const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
+  const [showFloatingDates, setShowFloatingDates] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
   const userManuallyMutedRef = useRef(false);
@@ -103,15 +103,32 @@ export default function App() {
 
   const dateDetails = selectedDate ? formatDateDetails(selectedDate) : null;
 
-  // Track scroll position to float the dates bar on top when scrolling through events
+  // Track scroll position: show dates bar ONLY while inside the events section,
+  // and hide it when above the events section or once the events section has ended.
   useEffect(() => {
     const handleScroll = () => {
-      const scrollThreshold = window.innerHeight * 0.4;
-      setIsScrolledPastHero(window.scrollY > scrollThreshold);
+      const eventsSection = document.getElementById('events-section');
+      if (eventsSection) {
+        const rect = eventsSection.getBoundingClientRect();
+        // Visible only while viewing events:
+        // - Appears when events section reaches top (rect.top <= 120)
+        // - Hides as soon as events section ends (rect.bottom < 150)
+        const isPastHero = rect.top <= 120;
+        const isBeforeEventsEnd = rect.bottom >= 150;
+        setShowFloatingDates(isPastHero && isBeforeEventsEnd);
+      } else {
+        const scrollThreshold = window.innerHeight * 0.4;
+        setShowFloatingDates(window.scrollY > scrollThreshold);
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleScroll, { passive: true });
+    handleScroll();
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
   }, []);
 
   const handleSelectDate = (date) => {
@@ -175,11 +192,11 @@ export default function App() {
 
       <div className="ambient-fog" aria-hidden="true" />
 
-      {/* Floating Sticky Dates Bar: Sticks to top when scrolling down through events */}
+      {/* Floating Sticky Dates Bar: Sticks to top only while inside events section */}
       <FloatingDatesBar
         selectedDate={selectedDate}
         onSelectDate={handleSelectDate}
-        visible={isScrolledPastHero}
+        visible={showFloatingDates}
       />
 
       {/* Full-Bleed End-to-End Viewport Hero with Given Boston Video */}
