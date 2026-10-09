@@ -2579,3 +2579,120 @@ body {
   }
 }
 
+/* ==========================================================================
+   5-SECOND SUBSCRIBE POPUP MODAL (with top-right close icon)
+   ========================================================================== */
+.subscribe-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 18px;
+  animation: popupFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes popupFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.subscribe-popup-card {
+  position: relative;
+  max-width: 480px;
+  width: 100%;
+  background: radial-gradient(circle at 50% 0%, rgba(255, 85, 0, 0.18) 0%, rgba(13, 15, 24, 0.98) 75%);
+  border: 1px solid rgba(255, 85, 0, 0.45);
+  border-radius: 16px;
+  padding: 36px 28px 30px;
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.95),
+    0 0 35px rgba(255, 85, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  text-align: center;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.subscribe-popup-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cccccc;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.subscribe-popup-close-btn:hover {
+  background: rgba(255, 85, 0, 0.25);
+  border-color: rgba(255, 85, 0, 0.5);
+  color: #ffffff;
+  transform: rotate(90deg);
+}
+
+.subscribe-popup-glow {
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  height: 160px;
+  background: radial-gradient(circle, rgba(255, 85, 0, 0.3) 0%, transparent 70%);
+  filter: blur(35px);
+  pointer-events: none;
+}
+
+.subscribe-popup-content {
+  position: relative;
+  z-index: 2;
+}
+
+.subscribe-popup-title {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+  margin: 0 0 8px 0;
+  line-height: 1.25;
+}
+
+.subscribe-popup-subtitle {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--cream-muted, #b3b3b3);
+  margin: 0 0 22px 0;
+}
+
+.subscribe-popup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.subscribe-popup-form .subscribe-btn {
+  width: 100%;
+}
+
+

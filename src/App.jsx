@@ -7,6 +7,7 @@ import EventCard from './components/EventCard';
 import EmptyState from './components/EmptyState';
 import GallerySection from './components/GallerySection';
 import SubscribeSection from './components/SubscribeSection';
+import SubscribePopup from './components/SubscribePopup';
 import Footer from './components/Footer';
 import OrganizerDashboard from './components/OrganizerDashboard';
 import { formatDateDetails } from './utils/dateUtils';
@@ -304,6 +305,9 @@ export default function App() {
 
       {/* VIP Halloween Email Subscription Section */}
       <SubscribeSection />
+
+      {/* 5-Second Timed Subscribe Popup */}
+      <SubscribePopup />
 
       <Footer />
     </div>
