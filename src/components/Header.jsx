@@ -5,7 +5,7 @@ export default function Header() {
     <header className="site-header">
       <div className="brand-badge">
         <div>
-          <span className="brand-title">Boston Halloween</span>
+          <span className="brand-title">Boston Halloween Events</span>
           <span className="brand-sub">Curated Event Guide</span>
         </div>
       </div>
