@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://bostonhalloweenevents.com/</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dbj0pmqr/image/upload/v1791547465/img2896-1.avif</image:loc>
+      <image:title>Boston Halloween Events 2026</image:title>
+      <image:caption>Official guide to Boston Halloween parties, club crawls, and nightlife with direct Eventbrite tickets.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dbj0pmqr/image/upload/v1791574940/IMG_2815.avif</image:loc>
+      <image:title>Boston Halloween Party Celebration</image:title>
+      <image:caption>Nightlife and costume celebrations in Boston.</image:caption>
+    </image:image>
+  </url>
+</urlset>

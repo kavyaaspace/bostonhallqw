@@ -457,6 +457,17 @@ setInterval(() => {
   }
 }, 2 * 60 * 1000);
 
+// Explicit Google Search Console Crawler Endpoints
+app.get('/robots.txt', (req, res) => {
+  res.type('text/plain');
+  res.sendFile(path.resolve(__dirname, '../public/robots.txt'));
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  res.type('application/xml');
+  res.sendFile(path.resolve(__dirname, '../public/sitemap.xml'));
+});
+
 // Static file serving for production
 app.use(express.static(DIST_DIR));
 

@@ -1,0 +1,11 @@
+# Google Search Console & Search Engine Directives
+# https://www.robotstxt.org/robotstxt.html
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /organizer
+Disallow: /api/
+
+# Sitemap location for Google Search Console
+Sitemap: https://bostonhalloweenevents.com/sitemap.xml
