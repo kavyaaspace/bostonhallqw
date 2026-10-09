@@ -15,7 +15,6 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const DATA_FILE = path.resolve(__dirname, '../data/events.json');
-const SUBSCRIBERS_CSV_FILE = path.resolve(__dirname, '../data/subscribers.csv');
 const DIST_DIR = path.resolve(__dirname, '../dist');
 
 const app = express();
@@ -97,7 +96,7 @@ app.get('/api/events', async (req, res) => {
 
 /**
  * Public Endpoint: Subscribe email to VIP newsletter
- * Appends email, timestamp, and source to CSV file
+ * Sends subscriber email directly to Google Sheets (no CSV).
  */
 app.post('/api/subscribe', async (req, res) => {
   try {
@@ -112,65 +111,21 @@ app.post('/api/subscribe', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Please enter a valid email address.' });
     }
 
-    // Ensure data directory exists
-    const dataDir = path.dirname(SUBSCRIBERS_CSV_FILE);
-    await fs.mkdir(dataDir, { recursive: true });
+    const googleSheetUrl =
+      process.env.GOOGLE_SHEETS_URL ||
+      'https://script.google.com/macros/s/AKfycbxICym8qazY2Ddo5x3q_owHDGbmmWqCwL16jon8vdb91yUKk23LYgXYhgXdE76mW8GG/exec';
 
-    let existingContent = '';
-    try {
-      existingContent = await fs.readFile(SUBSCRIBERS_CSV_FILE, 'utf-8');
-    } catch {
-      existingContent = '';
-    }
-
-    const now = new Date().toISOString();
-    if (!existingContent || existingContent.trim().length === 0) {
-      const header = 'Email\n';
-      const row = `"${cleanEmail}"\n`;
-      await fs.writeFile(SUBSCRIBERS_CSV_FILE, header + row, 'utf-8');
-
-      // Forward to Google Sheets if configured in .env
-      const googleSheetUrl = process.env.GOOGLE_SHEETS_URL;
-      if (googleSheetUrl && googleSheetUrl.startsWith('https://script.google.com/')) {
-        fetch(googleSheetUrl, {
+    if (googleSheetUrl && googleSheetUrl.startsWith('https://script.google.com/')) {
+      try {
+        await fetch(googleSheetUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: cleanEmail })
-        }).catch((err) => console.warn('[Google Sheets Sync] Forward notice:', err.message));
+          body: JSON.stringify({ email: cleanEmail }),
+          redirect: 'follow'
+        });
+      } catch (sheetErr) {
+        console.warn('[Google Sheets Sync] Forward notice:', sheetErr.message);
       }
-
-      return res.json({
-        success: true,
-        message: "You're on the VIP Halloween guest list! Watch your inbox for secret party drops and discounts."
-      });
-    }
-
-    // Check if already subscribed
-    const lines = existingContent.split('\n');
-    const alreadySubscribed = lines.some(line => {
-      const trimmed = line.trim().toLowerCase();
-      return trimmed.includes(`"${cleanEmail}"`) || trimmed === cleanEmail;
-    });
-
-    if (alreadySubscribed) {
-      return res.json({
-        success: true,
-        message: "You're already on the VIP Halloween guest list! We'll keep you updated."
-      });
-    }
-
-    // Append to CSV
-    const row = `"${cleanEmail}"\n`;
-    await fs.appendFile(SUBSCRIBERS_CSV_FILE, row, 'utf-8');
-
-    // Forward to Google Sheets if configured in .env
-    const googleSheetUrl = process.env.GOOGLE_SHEETS_URL;
-    if (googleSheetUrl && googleSheetUrl.startsWith('https://script.google.com/')) {
-      fetch(googleSheetUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: cleanEmail })
-      }).catch((err) => console.warn('[Google Sheets Sync] Forward notice:', err.message));
     }
 
     return res.json({

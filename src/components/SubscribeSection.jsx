@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Mail, CheckCircle2, AlertCircle } from 'lucide-react';
+import { submitSubscriberEmail } from '../services/subscriberService';
 
 export default function SubscribeSection() {
   const [email, setEmail] = useState('');
@@ -22,60 +23,12 @@ export default function SubscribeSection() {
     setErrorMessage('');
 
     try {
-      const res = await fetch('/api/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: cleanEmail })
-      });
-
-      // Sync to Google Sheets if configured in environment
-      const sheetUrl = import.meta.env.VITE_GOOGLE_SHEETS_URL;
-      if (sheetUrl && sheetUrl.startsWith('https://script.google.com/')) {
-        fetch(sheetUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: cleanEmail })
-        }).catch(() => {});
-      }
-
-      const data = await res.json().catch(() => ({}));
-      if (res.ok && data.success) {
-        setStatus('success');
-        setEmail('');
-      } else {
-        // Fallback save to localStorage
-        saveToLocalStorage(cleanEmail);
-        setStatus('success');
-        setEmail('');
-      }
-    } catch {
-      // Sync to Google Sheets if configured in environment even if /api is offline
-      const sheetUrl = import.meta.env.VITE_GOOGLE_SHEETS_URL;
-      if (sheetUrl && sheetUrl.startsWith('https://script.google.com/')) {
-        fetch(sheetUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: cleanEmail })
-        }).catch(() => {});
-      }
-
-      saveToLocalStorage(cleanEmail);
+      await submitSubscriberEmail(cleanEmail);
       setStatus('success');
       setEmail('');
-    }
-  };
-
-  const saveToLocalStorage = (emailToSave) => {
-    try {
-      const stored = JSON.parse(localStorage.getItem('halloween_subscribers') || '[]');
-      if (!stored.includes(emailToSave)) {
-        stored.push({ email: emailToSave, subscribedAt: new Date().toISOString() });
-        localStorage.setItem('halloween_subscribers', JSON.stringify(stored));
-      }
-    } catch {
-      // Ignore
+    } catch (err) {
+      setStatus('error');
+      setErrorMessage(err.message || 'Unable to subscribe right now. Please try again.');
     }
   };
 

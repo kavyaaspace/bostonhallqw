@@ -1,7 +1,5 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import fs from 'fs/promises';
-import path from 'path';
 
 function subscribersApiPlugin() {
   return {
@@ -30,34 +28,22 @@ function subscribersApiPlugin() {
                 return res.end(JSON.stringify({ success: false, error: 'Invalid email format' }));
               }
 
-              const csvPath = path.resolve(process.cwd(), 'data/subscribers.csv');
-              const now = new Date().toISOString();
+              const googleSheetUrl =
+                process.env.GOOGLE_SHEETS_URL ||
+                process.env.VITE_GOOGLE_SHEETS_URL ||
+                'https://script.google.com/macros/s/AKfycbxICym8qazY2Ddo5x3q_owHDGbmmWqCwL16jon8vdb91yUKk23LYgXYhgXdE76mW8GG/exec';
 
-              let existing = '';
-              try {
-                existing = await fs.readFile(csvPath, 'utf-8');
-              } catch {
-                existing = '';
-              }
-
-              if (!existing || existing.trim().length === 0) {
-                await fs.writeFile(csvPath, 'Email\n', 'utf-8');
-                existing = 'Email\n';
-              }
-
-              const isDuplicate = existing.toLowerCase().includes(`"${cleanEmail}"`) || existing.toLowerCase().includes(cleanEmail);
-              if (!isDuplicate) {
-                await fs.appendFile(csvPath, `"${cleanEmail}"\n`, 'utf-8');
-              }
-
-              // Forward to Google Sheets if configured
-              const googleSheetUrl = process.env.GOOGLE_SHEETS_URL || process.env.VITE_GOOGLE_SHEETS_URL;
               if (googleSheetUrl && googleSheetUrl.startsWith('https://script.google.com/')) {
-                fetch(googleSheetUrl, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ email: cleanEmail })
-                }).catch(() => {});
+                try {
+                  await fetch(googleSheetUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: cleanEmail }),
+                    redirect: 'follow'
+                  });
+                } catch (sheetErr) {
+                  console.warn('[Vite Dev Google Sheets Sync] Notice:', sheetErr.message);
+                }
               }
 
               res.statusCode = 200;
