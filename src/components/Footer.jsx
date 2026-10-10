@@ -1,5 +1,5 @@
 import React from 'react';
-import { Ticket, ShieldCheck, Lock } from 'lucide-react';
+import { Ticket, ShieldCheck } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -9,10 +9,6 @@ export default function Footer() {
           <div className="footer-badge-pill">
             <Ticket size={14} className="footer-badge-icon" />
             <span>Official Eventbrite Partner Listings</span>
-          </div>
-          <div className="footer-badge-pill">
-            <Lock size={13} className="footer-badge-icon" />
-            <span>Direct 256-Bit SSL Checkout</span>
           </div>
           <div className="footer-badge-pill">
             <ShieldCheck size={14} className="footer-badge-icon" />
