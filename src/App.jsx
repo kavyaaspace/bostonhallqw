@@ -10,7 +10,7 @@ import SubscribeSection from './components/SubscribeSection';
 import SubscribePopup from './components/SubscribePopup';
 import Footer from './components/Footer';
 import OrganizerDashboard from './components/OrganizerDashboard';
-import { formatDateDetails } from './utils/dateUtils';
+import { formatDateDetails, getCreativeDateHeading } from './utils/dateUtils';
 import fallbackEventsData from '../data/events.json';
 
 const HALLOWEEN_FALLBACK_EVENTS = fallbackEventsData.filter((e) => e.isHalloween !== false);
@@ -104,6 +104,7 @@ export default function App() {
     : events;
 
   const dateDetails = selectedDate ? formatDateDetails(selectedDate) : null;
+  const dateHeading = getCreativeDateHeading(selectedDate);
 
   // Track scroll position: show dates bar ONLY while inside the events section,
   // and hide it when above the events section or once the events section has ended.
@@ -253,15 +254,41 @@ export default function App() {
             <div className="events-section-header">
               <div className="events-kicker-badge">
                 <span className="kicker-sparkle">✦</span>
-                <span>BOSTON HALLOWEEN NIGHTLIFE</span>
+                <span>{dateHeading.kicker}</span>
                 <span className="kicker-sparkle">✦</span>
               </div>
               <h2 className="events-section-title">
-                {selectedDate ? `${dateDetails?.fullLabel || selectedDate} Events` : 'Upcoming Halloween Events'}
+                {dateHeading.title}
               </h2>
               <p className="events-section-subtitle">
-                Explore the top Halloween parties, pub crawls, and nightlife across Boston.
+                {dateHeading.subtitle}
               </p>
+              {selectedDate && (
+                <div style={{ marginTop: '12px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedDate(null)}
+                    className="btn-view-all-dates"
+                    style={{
+                      background: 'rgba(255, 107, 0, 0.1)',
+                      border: '1px solid rgba(255, 107, 0, 0.35)',
+                      color: 'var(--halloween-orange, #ff6b00)',
+                      padding: '6px 14px',
+                      borderRadius: '999px',
+                      fontSize: '0.82rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}
+                    aria-label="View all Halloween weekend events"
+                  >
+                    <span>← View All 3 Days</span>
+                  </button>
+                </div>
+              )}
             </div>
 
             {loading ? (
